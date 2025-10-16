@@ -26,7 +26,7 @@ from enum import Enum
 try:
     DATA_DIR = os.getenv("DATA_DIR", "./data")
     MODEL_PATH = os.path.join("DATA_DIR", "emotion_predictor.pk1")
-    ENCODER_PATH = os.path.join=(DATA_DIR, "label_encoder.pk1")
+    ENCODER_PATH = os.path.join(DATA_DIR, "label_encoder.pk1")
     UNIFIED_FILE_TPL = os.path.join(DATA_DIR, "user_{uid}_unified.pk1")
     
     OPENAI_API_KEY = "your-openai-api-key"  # Replace with your actual OpenAI API key

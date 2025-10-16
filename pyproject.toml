@@ -1,0 +1,27 @@
+[project]
+name = "backend"
+version = "0.1.0"
+description = ""
+authors = [
+    {name = "theloneson",email = "l.o.n.e.s.o.n456@gmail.com"}
+]
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "uvicorn (>=0.37.0,<0.38.0)",
+    "fastapi (>=0.119.0,<0.120.0)",
+    "pandas (>=2.3.3,<3.0.0)",
+    "numpy (>=2.3.4,<3.0.0)",
+    "websockets (>=15.0.1,<16.0.0)",
+    "python-multipart (>=0.0.20,<0.0.21)",
+    "joblib (>=1.5.2,<2.0.0)",
+    "scikit-learn (>=1.7.2,<2.0.0)",
+    "openai (>=2.3.0,<3.0.0)",
+    "httpx (>=0.28.1,<0.29.0)",
+    "pydantic (>=2.12.2,<3.0.0)"
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"

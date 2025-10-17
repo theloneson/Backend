@@ -15,8 +15,8 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.preprocessing import LabelEncoder
 import logging
 import websockets
-from dotenv import load_dotenv  # ✅ You forgot to import this earlier!
-from openai import OpenAI       # ✅ For the new OpenAI SDK
+from dotenv import load_dotenv
+from openai import OpenAI
 import httpx
 import re
 import os
@@ -25,19 +25,26 @@ from enum import Enum
 
 load_dotenv()
 
-# Get the key from the environment
-
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 # Configuration and ML model load
 try:
     DATA_DIR = os.getenv("DATA_DIR", "./data")
-    MODEL_PATH = os.path.join(DATA_DIR, "emotion_predictor.pkl")  # ✅ fixed .pk1 → .pkl
-    ENCODER_PATH = os.path.join(DATA_DIR, "label_encoder.pkl")
+    # Create data directory if it doesn't exist
+    os.makedirs(DATA_DIR, exist_ok=True)
+    
+    MODEL_PATH = os.path.join(DATA_DIR, "emotion_predictor.pkl")  # ✅ Fixed typo
+    ENCODER_PATH = os.path.join(DATA_DIR, "label_encoder.pkl")    # ✅ Fixed = to ()
     UNIFIED_FILE_TPL = os.path.join(DATA_DIR, "user_{uid}_unified.pkl")
-
-    client = OpenAI(api_key=OPENAI_API_KEY)
+    
+    OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+    if OPENAI_API_KEY:
+        client = OpenAI(api_key=OPENAI_API_KEY)
+        logger.info("✅ OpenAI client initialized")
+    else:
+        client = None
+        logger.warning("⚠️ OPENAI_API_KEY not found. AI features will be limited.")
 except Exception as e:
-    pass
+    client = None
+    logger.error(f"Failed to initialize OpenAI: {e}")
 
 DATABASE = "trading_app.db"
 logging.basicConfig(level=logging.INFO)
@@ -337,12 +344,10 @@ def detect_emotion(df):
 # OpenAI helper
 # ---------------------------------------------------------
 def call_openai_warning(df: pd.DataFrame, predicted_emotion: str) -> Dict[str, Any]:
-    """Ask OpenAI to turn features into a human-friendly warning.
-    Returns a robust JSON even if OpenAI isn't configured.
-    """
-    if openai is None or not os.getenv("OPENAI_API_KEY"):
+    """Ask OpenAI to turn features into a human-friendly warning."""
+    if client is None or not OPENAI_API_KEY:  # ✅ Check client, not openai module
         return {
-            "insight": "Heuristic-only: model suggests {}.".format(predicted_emotion),
+            "insight": f"Heuristic-only: model suggests {predicted_emotion}.",
             "warning": "Trading psychology signal generated without OpenAI.",
             "recommendation": "Reduce leverage, avoid rapid entries, set stops.",
             "advice": "Take a short break before placing the next trade.",
@@ -364,7 +369,6 @@ def call_openai_warning(df: pd.DataFrame, predicted_emotion: str) -> Dict[str, A
         content = resp.choices[0].message.content if resp and resp.choices else "{}"
         try:
             parsed = json.loads(content)
-            # minimal validation
             for k in ["insight", "warning", "recommendation", "advice"]:
                 parsed.setdefault(k, "")
             return parsed

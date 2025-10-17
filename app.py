@@ -15,23 +15,27 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.preprocessing import LabelEncoder
 import logging
 import websockets
-import openai
+from dotenv import load_dotenv  # ✅ You forgot to import this earlier!
+from openai import OpenAI       # ✅ For the new OpenAI SDK
 import httpx
 import re
 import os
 from contextlib import asynccontextmanager
 from enum import Enum
 
+load_dotenv()
+
+# Get the key from the environment
+
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 # Configuration and ML model load
 try:
     DATA_DIR = os.getenv("DATA_DIR", "./data")
-    MODEL_PATH = os.path.join("DATA_DIR", "emotion_predictor.pk1")
-    ENCODER_PATH = os.path.join(DATA_DIR, "label_encoder.pk1")
-    UNIFIED_FILE_TPL = os.path.join(DATA_DIR, "user_{uid}_unified.pk1")
-    
-    OPENAI_API_KEY = "your-openai-api-key"  # Replace with your actual OpenAI API key
-    # Initialize OpenAI client
-    client = openai.OpenAI(api_key=OPENAI_API_KEY)
+    MODEL_PATH = os.path.join(DATA_DIR, "emotion_predictor.pkl")  # ✅ fixed .pk1 → .pkl
+    ENCODER_PATH = os.path.join(DATA_DIR, "label_encoder.pkl")
+    UNIFIED_FILE_TPL = os.path.join(DATA_DIR, "user_{uid}_unified.pkl")
+
+    client = OpenAI(api_key=OPENAI_API_KEY)
 except Exception as e:
     pass
 

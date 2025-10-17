@@ -23,6 +23,9 @@ import os
 from contextlib import asynccontextmanager
 from enum import Enum
 
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
 load_dotenv()
 
 # Configuration and ML model load
@@ -47,8 +50,6 @@ except Exception as e:
     logger.error(f"Failed to initialize OpenAI: {e}")
 
 DATABASE = "trading_app.db"
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
 
 
 # Global model objects + locks

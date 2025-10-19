@@ -727,7 +727,16 @@ app = FastAPI(lifespan=lifespan, title="Trading Psychology Backend", version="1.
 # CORS configuration for frontend
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:8080"],
+    allow_origins=[
+        "http://localhost:8080",
+        "http://localhost:3000",      # React default
+        "http://127.0.0.1:3000",      # React alternative
+        "http://localhost:5173",      # Vite default
+        "http://127.0.0.1:5173",      # Vite alternative
+        "http://localhost:19006",     # Expo web
+        "http://localhost:19000",     # Expo
+        # Add your actual frontend URL when deployed
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
